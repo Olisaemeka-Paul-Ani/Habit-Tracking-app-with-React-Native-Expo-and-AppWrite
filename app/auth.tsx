@@ -1,9 +1,29 @@
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
-import { Button, Text, TextInput } from "react-native-paper";
+import { Button, Text, TextInput, useTheme } from "react-native-paper";
 
 export default function AuthScreen (){
   const [isSignUp, setIsSignUp] = useState<boolean>(false)
+  const [email, setEmail] = useState<string>("")
+  const [password, setPassword] = useState<string>("")
+  const [error, setError] = useState<string | null>("")
+
+  const theme = useTheme()
+
+  const handleAuth = () => {
+    if (!email|| !password){
+        setError("Please fill in all fields")
+
+    }
+
+    if (password.length < 6){
+    setError("Passwords must be less that 6 characters .")
+    return;
+  }
+
+  setError(null)
+  }
+
    const handleSwitchMode = () => {
     setIsSignUp((prev) => !prev)
   };
@@ -13,10 +33,13 @@ export default function AuthScreen (){
       <Text style = {styles.title} variant="headlineMedium">
         {isSignUp? "Create Account" : "Welcome Back"}
       </Text>
-      <TextInput style = {styles.input} label = "Email" autoCapitalize="none" keyboardType = "email-address" placeholder = "example@gmail.com" mode = "outlined" />
-      <TextInput style = {styles.input} label = "Password" autoCapitalize="none" keyboardType = "email-address" mode = "outlined" />
-      <Button mode = "contained">{isSignUp? "Sign Up": "Sign In"}</Button>
-      <Button style = {styles.button} mode = "text" onPress={handleSwitchMode}>{isSignUp? "Already have an account? Sign In": "Don't have an account, Sign Up"}</Button>
+      <TextInput style = {styles.input} label = "Email" autoCapitalize="none" keyboardType = "email-address" placeholder = "example@gmail.com" mode = "outlined" onChangeText={setEmail}/>
+      <TextInput style = {styles.input} label = "Password" autoCapitalize="none" keyboardType = "email-address" mode = "outlined" onChangeText={setPassword} />
+      {error && (
+        <Text style = {{color:theme.colors.error}}>{error}</Text>
+      )}
+      <Button style = {styles.button} mode = "contained" onPress={handleAuth}>{isSignUp? "Sign Up": "Sign In"}</Button>
+      <Button style = {styles.switchModeButton} mode = "text" onPress={handleSwitchMode}>{isSignUp? "Already have an account? Sign In": "Don't have an account, Sign Up"}</Button>
     </View>
   </KeyboardAvoidingView>);
 
